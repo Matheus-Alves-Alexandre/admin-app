@@ -1,6 +1,6 @@
-import React from "react";
+import Image from "next/image";
+import MenuLink from "./menuLink/menuLink";
 import styles from "./sidebar.module.css";
-
 import {
   MdDashboard,
   MdSupervisedUserCircle,
@@ -13,10 +13,10 @@ import {
   MdHelpCenter,
   MdLogout,
 } from "react-icons/md";
-import MenuLink from "./menuLink/MenuLink";
-import Image from "next/image";
+import { FaBitcoin } from "react-icons/fa6";
+import { auth, signOut } from "@/app/auth";
 
-export const menuItems = [
+const menuItems = [
   {
     title: "Pages",
     list: [
@@ -36,13 +36,18 @@ export const menuItems = [
         icon: <MdShoppingBag />,
       },
       {
-        title: "Transactions",
-        path: "/dashboard/transactions",
+        title: "Stocks",
+        path: "/dashboard/stock",
         icon: <MdAttachMoney />,
+      },
+      {
+        title: "Crypto",
+        path: "/dashboard/crypto",
+        icon: <FaBitcoin />,
       },
     ],
   },
-  {
+  /*  {
     title: "Analytics",
     list: [
       {
@@ -61,7 +66,7 @@ export const menuItems = [
         icon: <MdPeople />,
       },
     ],
-  },
+  }, */
   {
     title: "User",
     list: [
@@ -79,21 +84,26 @@ export const menuItems = [
   },
 ];
 
-const Sidebar = () => {
+const Sidebar = async () => {
+  const { user } = await auth();
   return (
     <div className={styles.container}>
       <div className={styles.user}>
-        {" "}
-        <Image src="/noavatar.png" alt="" width="50" height="50" />
+        <Image
+          className={styles.userImage}
+          src={user.img || "/noavatar.png"}
+          alt=""
+          width="50"
+          height="50"
+        />
         <div className={styles.userDetail}>
-          <spam className={styles.userName}>matheus alexandre</spam>
-          <spam className={styles.usertitle}>adm</spam>
+          <span className={styles.username}>{user.username}</span>
+          <span className={styles.userTitle}>Administrator</span>
         </div>
       </div>
-      <ul>
+      <ul className={styles.list}>
         {menuItems.map((cat) => (
           <li key={cat.title}>
-            {cat.title}
             <span className={styles.cat}>{cat.title}</span>
             {cat.list.map((item) => (
               <MenuLink item={item} key={item.title} />
@@ -101,6 +111,17 @@ const Sidebar = () => {
           </li>
         ))}
       </ul>
+      <form
+        action={async () => {
+          "use server";
+          await signOut();
+        }}
+      >
+        <button className={styles.logout}>
+          <MdLogout />
+          Logout
+        </button>
+      </form>
     </div>
   );
 };

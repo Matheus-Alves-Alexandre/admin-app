@@ -1,13 +1,19 @@
-import React from "react";
-import styles from "./menuLink.module.css";
+"use client"
 
-const MenuLink = ({ item }) => {
+import Link from 'next/link'
+import styles from './menuLink.module.css'
+import { usePathname } from 'next/navigation'
+
+const MenuLink = ({item}) => {
+
+  const pathname = usePathname()
+
   return (
-    <div href={item.path} className={styles.container}>
+    <Link href={item.path} className={`${styles.container} ${pathname === item.path && styles.active}`}>
       {item.icon}
       {item.title}
-    </div>
-  );
-};
+    </Link>
+  )
+}
 
-export default MenuLink;
+export default MenuLink
